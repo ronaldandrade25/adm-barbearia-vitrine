@@ -42,7 +42,7 @@ const SERVICES_LIST = [
 ];
 const PAYMENT_METHODS = ["PIX", "Dinheiro", "Cartão de Crédito", "Cartão de Débito"];
 
-const BOOKING_URL = "https://jc-estetica-sobrancelha.vercel.app/";
+const BOOKING_URL = "https://barbearia-vitrine.vercel.app/";
 
 const mainContents = document.querySelectorAll("main");
 const tabBtns = document.querySelectorAll(".tab-btn");
