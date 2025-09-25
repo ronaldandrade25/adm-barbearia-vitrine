@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel • Barbearia</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div id="notification-container"></div>
+
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <img src="./assets/logo-ra-baberaria1.png" alt="Logo" class="logo-mark">
+                Barbearia — Painel
+            </a>
+
+            <div class="tabs-in-header">
+                <button type="button" class="tab-btn" data-tab="agenda"><i class="bx bx-calendar"></i> Agenda</button>
+                <button type="button" class="tab-btn" data-tab="reports"><i class="bx bx-bar-chart"></i>
+                    Relatórios</button>
+                <button type="button" class="tab-btn" data-tab="clientes"><i class="bx bx-user-pin"></i>
+                    Clientes</button>
+            </div>
+
+            <!-- Botão sair removido porque não há mais login -->
+            <div style="margin-left:auto; display:none; align-items:center; gap:8px">
+                <button id="logoutBtn" class="btn btn-light" title="Sair">
+                    <i class='bx bx-log-out'></i> Sair
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main id="clientesMain">
+        <div class="grid">
+            <div class="left-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Cadastro de Cliente</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="clientForm" class="form-grid">
+                            <div class="form-row">
+                                <div class="field"><label for="clientName">Nome *</label><input type="text"
+                                        id="clientName" required placeholder="Nome completo do cliente"></div>
+                                <div class="field"><label for="clientPhone">Telefone</label><input type="tel"
+                                        id="clientPhone" placeholder="(XX) XXXXX-XXXX" maxlength="15"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="field"><label for="clientType">Tipo</label><select id="clientType">
+                                        <option value="cliente">Cliente Avulso</option>
+                                        <option value="plano_jc">Plano JC</option>
+                                    </select></div>
+                                <div class="field hidden-block" id="clientValueField"><label for="clientValue">Valor
+                                        Mensal (R$)</label><input type="number" id="clientValue" step="0.01"></div>
+                                <div class="field hidden-block" id="clientPayDayField"><label for="clientPayDay">Dia
+                                        Pgto.</label><input type="number" id="clientPayDay" min="1" max="31"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="field"><label for="clientStatus">Status</label><select id="clientStatus">
+                                        <option value="ativo">Ativo</option>
+                                        <option value="pausado">Pausado</option>
+                                        <option value="inativo">Inativo</option>
+                                    </select></div>
+                                <div class="field"><label>&nbsp;</label><button type="submit" id="saveClientBtn"
+                                        class="btn btn-primary">Salvar Cliente</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:24px;">
+                    <div class="card-header">
+                        <h3>Lista de Clientes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="client-list-controls">
+                            <div class="search-wrapper">
+                                <i class='bx bx-search'></i>
+                                <input type="search" id="clientSearch" placeholder="Pesquisar por nome ou telefone...">
+                            </div>
+                            <div class="client-filter-tabs">
+                                <button class="filter-tab-btn active" data-filter="all">Todos</button>
+                                <button class="filter-tab-btn" data-filter="cliente">Cliente Avulso</button>
+                                <button class="filter-tab-btn" data-filter="plano_jc">Plano JC</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Telefone</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="kpis">
+                    <div class="kpi">
+                        <div class="kpi-label">Membros Ativos (Plano)</div>
+                        <div id="activeMembers" class="kpi-value">0</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Receita Estimada</div>
+                        <div id="estimatedRevenue" class="kpi-value">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Pagamentos do Mês</h3>
+                    </div>
+                    <div class="card-body-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="payments-total">Total do mês: <span id="monthlyTotal">R$ 0,00</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="agendaMain">
+        <div class="toolbar">
+            <div class="field"><label for="profissionalSelect">Profissional</label><select
+                    id="profissionalSelect"></select></div>
+            <div class="field"><label for="dataFiltro">Data</label><input type="date" id="dataFiltro" /></div>
+            <div class="field"><label for="horaFiltro">Hora (opcional)</label><select id="horaFiltro">
+                    <option value="">Todas</option>
+                </select></div>
+            <div class="field"><button id="buscarBtn" class="btn btn-primary"><i class='bx bx-search'></i>
+                    Buscar</button></div>
+            <div class="field">
+                <div class="actions">
+                    <button id="bloquearBtn" class="btn btn-del"><i class='bx bx-block'></i> Desativar</button>
+                    <button id="desbloquearBtn" class="btn btn-success"><i class='bx bx-reset'></i> Reativar</button>
+                </div>
+            </div>
+        </div>
+        <div id="agenda-grid"><!-- horários via JS --></div>
+    </main>
+
+    <main id="reportsMain">
+        <div class="kpis">
+            <div class="kpi">
+                <div class="kpi-label">Agendamentos</div>
+                <div id="kpiQtd" class="kpi-value">0</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Faturamento</div>
+                <div id="kpiBruto" class="kpi-value">R$ 0,00</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Ticket médio</div>
+                <div id="kpiTicket" class="kpi-value">R$ 0,00</div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+                <h3>Relatório Detalhado</h3>
+            </div>
+            <div class="card-body">
+                <div class="reports-toolbar" style="padding:0; border:0; margin-bottom: 24px;">
+                    <div class="field"><label for="relProf">Profissional</label><select id="relProf"></select></div>
+                    <div class="field"><label for="relDe">De</label><input type="date" id="relDe"></div>
+                    <div class="field"><label for="relAte">Até</label><input type="date" id="relAte"></div>
+                    <div class="field">
+                        <div class="actions">
+                            <button id="relGerarBtn" class="btn btn-primary"><i class="bx bx-bar-chart"></i>
+                                Gerar</button>
+                            <button id="exportCsv" class="btn btn-light"><i class="bx bx-download"></i> CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Profissional</th>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Forma</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relDetalheTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Faturamento por Serviço</h3>
+            </div>
+            <div class="card-body" style="display:flex; flex-direction:column; align-items:center;">
+                <div style="position:relative; max-width:400px; width:100%;">
+                    <canvas id="reportsChart"></canvas>
+                </div>
+                <div id="reportsChartLegend" class="chart-legend"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="mainModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
